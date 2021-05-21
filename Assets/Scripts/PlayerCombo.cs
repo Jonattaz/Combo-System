@@ -10,6 +10,9 @@ public class PlayerCombo : MonoBehaviour
     // Verifica em qual hit se encontra o combo, primeiro, segundo ou terceiro
     public List<string> currentCombo;
 
+    // Referência ao script attack
+    public Attack attack;
+    
     // Hit atual e próximo hit
     private Hit currentHit, nextHit;
 
@@ -146,6 +149,7 @@ public class PlayerCombo : MonoBehaviour
         currentCombo.Add(hit.inputButton);
         currentHit = hit;
         canHit = true;
+        attack.SetAttack(hit); // Pode ser currentHit também
     }
 
     // Método responsável pelo reset do combo,
