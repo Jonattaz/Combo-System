@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Attack : MonoBehaviour
 {
+    // Referência o audioPlayer
+    public AudioPlayer audioPlayer;
+
     // Valor do dano de ataque
     private int damage;
     // Se o ataque terá ou não slow down
@@ -18,5 +21,49 @@ public class Attack : MonoBehaviour
         slowDown = hit.slowDown;
         hitSound = hit.hitSound;
     }
-    
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Damage enemy = collision.GetComponent<Damage>();
+        
+        // Caso o objeto não seja nulo a função TakeDamage será chamada
+        if (enemy!= null) 
+        {
+            enemy.TakeDamage(damage);
+            audioPlayer.PlaySound(hitSound);
+
+            if (slowDown)
+            {
+                SlowDown.instance.SetSlowDown(); 
+            }
+
+            ComboManager.instance.SetCombo();
+        }
+        
+    }
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

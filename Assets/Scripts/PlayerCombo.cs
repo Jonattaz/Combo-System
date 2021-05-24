@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerCombo : MonoBehaviour
 {
@@ -12,7 +13,10 @@ public class PlayerCombo : MonoBehaviour
 
     // Referência ao script attack
     public Attack attack;
-    
+
+    // Evento chamado quando inicia o combo e evento chamado quando termina o combo
+    public UnityEvent onStartCombo, onFinishCombo; 
+
     // Hit atual e próximo hit
     private Hit currentHit, nextHit;
 
@@ -61,7 +65,7 @@ public class PlayerCombo : MonoBehaviour
             if ((Input.GetButtonDown("Fire1") || Input.GetButtonDown("Fire2")) && !canHit)
             {
 
-                resetCombo = true;
+                resetCombo = true; 
             }
 
             // Verifica se o combo do loop atual possui mais hits que a lista currentCombo
@@ -74,7 +78,8 @@ public class PlayerCombo : MonoBehaviour
                     // Verifica se é o primeiro hit de algum combo
                     if (currentCombo.Count == 0)
                     {
-                        Debug.Log("Primeiro hit foi adicionado");
+                        onStartCombo.Invoke();
+                        Debug.Log("Primeiro hit foi adicionado");                    
                         PlayHit(combos[i].hits[currentCombo.Count]);
                         break;
                     }
@@ -143,13 +148,13 @@ public class PlayerCombo : MonoBehaviour
     void PlayHit(Hit hit)
     {
         comboTimer = 0;
+        attack.SetAttack(hit); // Pode ser currentHit também
         // Ativa a animação de acordo com o nome
         anim.Play(hit.animation);
         startCombo = true;
         currentCombo.Add(hit.inputButton);
         currentHit = hit;
         canHit = true;
-        attack.SetAttack(hit); // Pode ser currentHit também
     }
 
     // Método responsável pelo reset do combo,
@@ -157,6 +162,8 @@ public class PlayerCombo : MonoBehaviour
     // o combo é resetado
     void ResetCombo()
     {
+        resetCombo = false;
+        onFinishCombo.Invoke();
         startCombo = false;
         comboTimer = 0;
         currentCombo.Clear();
